@@ -1,0 +1,143 @@
+<!DOCTYPE html>
+<html lang="pt-br" data-bs-theme="dark">
+<head>
+  <meta charset="UTF-8">
+  <title>Fluxhook</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css" rel="stylesheet">
+  <link rel="stylesheet" href="style.css">
+</head>
+
+<body class="bg-body-tertiary">
+
+<div class="container-fluid py-4">
+  <div class="d-flex justify-content-between align-items-center mb-4">
+    <h3><i class="bi bi-webhook"></i> Fluxhook</h3>
+    <div class="btn-group" role="group">
+      <button class="btn btn-outline-info btn-sm" id="multiModeToggle" title="Ativar/Desativar modo múltiplas mensagens">
+        <i class="bi bi-stack"></i> Modo Múltiplo
+      </button>
+      <button class="btn btn-outline-primary btn-sm" id="importJsonBtn">
+        <i class="bi bi-box-arrow-in-down"></i> Importar JSON
+      </button>
+      <button class="btn btn-outline-primary btn-sm" id="exportJson">
+        <i class="bi bi-box-arrow-up"></i> Exportar JSON
+      </button>
+      <button class="btn btn-outline-secondary btn-sm" id="themeToggle">
+        <i class="bi bi-circle-half"></i> Tema
+      </button>
+    </div>
+  </div>
+
+  <!-- Painel de Grupo de Mensagens (oculto por padrão) -->
+  <div id="queuePanel" class="card shadow-sm mb-3" style="display: none;">
+    <div class="card-header d-flex justify-content-between align-items-center">
+      <h6 class="mb-0"><i class="bi bi-stack"></i> Grupo de Mensagens (<span id="queueCount">0</span>)</h6>
+      <div>
+        <button class="btn btn-sm btn-success" id="sendAllBtn">
+          <i class="bi bi-send-fill"></i> Enviar Todas
+        </button>
+        <button class="btn btn-sm btn-outline-primary" id="addToQueueBtn">
+          <i class="bi bi-plus-lg"></i> Adicionar ao Grupo
+        </button>
+        <button class="btn btn-sm btn-outline-danger" id="clearQueueBtn">
+          <i class="bi bi-trash"></i> Limpar Grupo
+        </button>
+      </div>
+    </div>
+    <div class="card-body">
+      <div class="mb-3">
+        <label class="form-label fw-bold"><i class="bi bi-link-45deg"></i> Webhook URL (todas as mensagens do grupo serão enviadas para este webhook)</label>
+        <input type="text" id="queueWebhookUrl" class="form-control" placeholder="https://api.fluxer.app/v1/webhooks/...">
+      </div>
+      <hr>
+      <div id="queueContainer" class="queue-container"></div>
+      <div id="queueProgress" style="display: none;" class="mt-3">
+        <div class="d-flex justify-content-between mb-2">
+          <small>Enviando...</small>
+          <small id="progressText">0/0</small>
+        </div>
+        <div class="progress">
+          <div id="progressBar" class="progress-bar progress-bar-striped progress-bar-animated" role="progressbar" style="width: 0%"></div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="row g-4">
+
+    <!-- EDITOR -->
+    <div class="col-lg-6">
+      <div class="card shadow-sm mb-3">
+        <div class="card-header">
+          <h6 class="mb-0"><i class="bi bi-gear"></i> Configurações</h6>
+        </div>
+        <div class="card-body">
+          <div class="mb-3" id="webhookUrlSection">
+            <label class="form-label">Webhook URL</label>
+            <input type="text" id="webhookUrl" class="form-control" placeholder="https://api.fluxer.app/v1/webhooks/...">
+          </div>
+
+          <div class="mb-3">
+            <label class="form-label">Username</label>
+            <input type="text" id="username" class="form-control" placeholder="Nome do Bot" oninput="updatePreview()">
+          </div>
+
+          <div class="mb-3">
+            <label class="form-label">Avatar URL</label>
+            <input type="text" id="avatar" class="form-control" placeholder="https://..." oninput="updatePreview()">
+          </div>
+
+          <div class="mb-3">
+            <label class="form-label">Mensagem</label>
+            <textarea id="content" class="form-control" rows="3" oninput="updatePreview()"></textarea>
+          </div>
+        </div>
+      </div>
+
+      <div class="card shadow-sm">
+        <div class="card-header d-flex justify-content-between align-items-center">
+          <h6 class="mb-0"><i class="bi bi-card-text"></i> Embeds</h6>
+          <button class="btn btn-primary btn-sm" id="addEmbed">
+            <i class="bi bi-plus-lg"></i> Adicionar Embed
+          </button>
+        </div>
+        <div class="card-body">
+          <div id="embedsContainer"></div>
+        </div>
+      </div>
+
+      <div class="d-grid gap-2 mt-3">
+        <div class="d-flex gap-2">
+          <button class="btn btn-success btn-lg flex-grow-1" id="sendBtn">
+            <i class="bi bi-send"></i> Enviar Webhook
+          </button>
+          <button class="btn btn-warning btn-lg" id="cancelEditBtn" style="display: none;">
+            <i class="bi bi-x-lg"></i> Cancelar
+          </button>
+        </div>
+      </div>
+    </div>
+
+    <!-- PREVIEW -->
+    <div class="col-lg-6">
+      <div class="card shadow-sm position-sticky" style="top: 1rem;">
+        <div class="card-header">
+          <h6 class="mb-0"><i class="bi bi-eye"></i> Preview</h6>
+        </div>
+        <div class="card-body discord-preview">
+          <div id="preview"></div>
+        </div>
+      </div>
+    </div>
+
+  </div>
+</div>
+
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
+<script type="module" src="../init-discord.js"></script>
+<script src="app.js"></script>
+
+</body>
+</html>

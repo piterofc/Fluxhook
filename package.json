@@ -1,0 +1,21 @@
+{
+  "name": "fluxhook",
+  "version": "1.0.0",
+  "description": "The way to build and send Fluxer webhooks",
+  "main": "server.js",
+  "scripts": {
+    "start": "node server.js",
+    "dev": "node server.js"
+  },
+  "keywords": [
+    "discord",
+    "webhook",
+    "embed"
+  ],
+  "author": "",
+  "license": "GPL-3.0-only",
+  "dependencies": {
+    "express": "^4.18.2",
+    "node-fetch": "^3.3.2"
+  }
+}
